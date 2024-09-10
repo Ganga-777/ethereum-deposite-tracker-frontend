@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Fetch Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Block Transactions</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Block Number</th>
+            <th>Timestamp</th>
+            <th>Public Key</th>
+            <th>Hash</th>
+            <th>Fee</th>
+        </tr>
+    </thead>
+    <tbody id="data-table">
+    </tbody>
+</table>
+
+<script>
+    function fetchAndUpdateData() {
+        fetch('https://ethereum-beacon-deposit-tracker.onrender.com/deposits')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('data-table');
+                tableBody.innerHTML = ''; // Clear existing data
+                data.forEach(item => {
+                    const row = `<tr>
+                        <td>${item.blockNumber}</td>
+                        <td>${new Date(item.blockTimestamp).toLocaleString()}</td>
+                        <td>${item.publicKey}</td>
+                        <td>${item.hash}</td>
+                        <td>${item.fee}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Initial fetch
+    fetchAndUpdateData();
+
+    // Set up interval to fetch data every 30 seconds
+    setInterval(fetchAndUpdateData, 30000);
+</script>
+
+</body>
+</html>
